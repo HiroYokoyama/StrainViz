@@ -22,9 +22,10 @@ echo "[$(date +"%Y-%m-%d %T")] Proton optimization files created."
 cd input/$1
 fileend="_protonopt"
 # Run the _protonopt.inp files in Orca to get _protonopt.out files
-module load orca
+if command -v module >/dev/null 2>&1; then module load orca; fi
 WORK_DIR=$PWD
-TEMP_DIR=$(mktemp -d)
+mkdir -p ../../tmp
+TEMP_DIR=$(mktemp -d ../../tmp/tmp.XXXXXX)
 for file in "${INPUT_NAMES[@]}"; do
     cp "$file$fileend.inp" "$TEMP_DIR/"
     cd "$TEMP_DIR"
@@ -51,7 +52,7 @@ for file in "${INPUT_NAMES[@]}"; do
     cd "$WORK_DIR"
 done
 
-rm -rf "$TEMP_DIR"
+# rm -rf "$TEMP_DIR"
 
 cd ../..
 mkdir -p output/$1
