@@ -34,7 +34,16 @@ def create_input(file):
 	script.write("%geom\n\tcoordsys redundant_old\nend\n")
 	script.write("* xyz 0 1\n")
 	for line in coordinates:
-		script.write(line + "\n")
+		tokens = line.split()
+		if tokens:
+			if tokens[0] == '-':
+				tokens[0] = 'DA'
+			if len(tokens) >= 4:
+				script.write(f"  {tokens[0]:<2} {tokens[1]:>14} {tokens[2]:>14} {tokens[3]:>14}\n")
+			else:
+				script.write(line + "\n")
+		else:
+			script.write(line + "\n")
 	script.write("\n*")
 
 	os.remove(file)
