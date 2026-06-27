@@ -71,7 +71,7 @@ def force_parse(file):
 			dashed_lines = 0
 			continue
 		if dashed_lines == 1:
-			energy_data[x].append(line.split())
+			energy_data[x].append(line)
 	
 	#Get energy at each step
 	step_energy = []
@@ -95,14 +95,22 @@ def force_parse(file):
 	dihedral_energies = [[]]
 	for x, set in enumerate(energy_data):
 		for line in set:
-			if len(line) == 8:
-				bond_energies[x].append([float(line[-3])*float(line[-2])*1.889725989,[re.sub(r"\D","",line[2]),re.sub(r"\D","",line[3])]])
-			if len(line) == 9:
-				angle_energies[x].append([float(line[-3])*float(line[-2])*0.01745329252,[re.sub(r"\D","",line[2]),re.sub(r"\D","",line[3]),re.sub(r"\D","",line[4])]])
-			if len(line) == 10:
-				dihedral_energies[x].append([float(line[-3])*float(line[-2])*0.01745329252,[re.sub(r"\D","",line[2]),re.sub(r"\D","",line[3]),re.sub(r"\D","",line[4]),re.sub(r"\D","",line[5])]])
-			if len(line) == 11:
-				angle_energies[x].append([float(line[-3])*float(line[-2])*0.01745329252,[re.sub(r"\D","",line[2]),re.sub(r"\D","",line[3]),re.sub(r"\D","",line[4])]])
+			start = line.find('(')
+			end = line.find(')')
+			if start != -1 and end != -1:
+				content = line[start+1:end]
+				atoms = [re.sub(r"\D", "", part) for part in content.split(',') if part.split()]
+				parts = line.split()
+				if len(parts) >= 3:
+					val_de_dq = float(parts[-3])
+					val_step = float(parts[-2])
+					
+					if len(atoms) == 2:
+						bond_energies[x].append([val_de_dq * val_step * 1.889725989, atoms])
+					elif len(atoms) == 3:
+						angle_energies[x].append([val_de_dq * val_step * 0.01745329252, atoms])
+					elif len(atoms) == 4:
+						dihedral_energies[x].append([val_de_dq * val_step * 0.01745329252, atoms])
 		bond_energies.append([])
 		angle_energies.append([])
 		dihedral_energies.append([])
