@@ -71,13 +71,14 @@ def create_key(base_atoms, dummy_atoms, bond_atoms):
 			if line1[1:] == line2[1:]:
 				key.append([line2[0], line1[0]])
 
-	#Find atoms in dummy, but not in base geometry
+	#Find capping H atoms in dummy, but not in base geometry (ignore DA caps)
 	extra_atoms = []
 	for line in dummy_atoms:
 		if line[0] not in [x[0] for x in key]:
-			extra_atoms.append(line[0])
+			if line[1] == 'H':
+				extra_atoms.append(line[0])
 	
-	#Find atoms attached to those extra atoms
+	#Find atoms attached to those capping H atoms
 	peripheral_atoms = []
 	for line in bond_atoms:
 		for atom in extra_atoms:
@@ -86,7 +87,7 @@ def create_key(base_atoms, dummy_atoms, bond_atoms):
 			elif str(atom) == line[1] and int(line[0]) not in peripheral_atoms:
 				peripheral_atoms.append(int(line[0]))
 		
-	#Trim off the atoms at the ends of the dummy
+	#Trim off the atoms at the ends of the dummy (only those attached to capping H)
 	trimmed_key = []
 	for line in key:
 		if line[0] not in peripheral_atoms:
