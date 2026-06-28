@@ -196,6 +196,10 @@ def translate_forces(forces, key):
 Returns a force matrix that is normalized between 1 and 32 for VMD colours.
 """
 def vmd_norm(force_values):
+	# Fix 1: Handle empty sequence gracefully
+	if not force_values:
+		return [], 0, 0
+
 	norm_values = []
 	for line in force_values:
 		norm_values.append(line[0])
@@ -207,7 +211,12 @@ def vmd_norm(force_values):
 	for i in range(len(norm_values)):
 		norm_values[i] -= norm_min
 
-	norm_max = max(norm_values)/31
+	# Fix 2: Prevent zero division
+	if max(norm_values) != 0:
+		norm_max = max(norm_values) / 31
+	else:
+		norm_max = 1.0 # Or any non-zero value, since all values are 0.0 anyway
+
 	for i in range(len(norm_values)):
 		norm_values[i] /= norm_max
 		norm_values[i] += 1

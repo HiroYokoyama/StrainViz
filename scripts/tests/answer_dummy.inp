@@ -2,9 +2,6 @@
 %pal
 	nprocs 1
 end
-%geom
-	coordsys redundant_old
-end
 * xyz 0 1
   C     -3.452440    0.712200    0.112300
   C     -3.146900    0.051140    1.317720
