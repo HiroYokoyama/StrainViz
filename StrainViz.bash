@@ -21,7 +21,7 @@ echo "[$(date +"%Y-%m-%d %T")] Proton optimization files created."
 cd input/$1
 fileend="_protonopt"
 # Run the _protonopt.inp files in Gaussian to get _protonopt.out files
-module load gaussian
+# module load gaussian
 for file in "${INPUT_NAMES[@]}"; do
     g16 < "$file$fileend.inp" > "$file$fileend.out" || echo "[$(date +"%Y-%m-%d %T")] $file proton optimization failed."
     echo "[$(date +"%Y-%m-%d %T")] $file protons optimized."
