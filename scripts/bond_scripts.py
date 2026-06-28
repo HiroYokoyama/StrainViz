@@ -52,6 +52,15 @@ def force_parse(file):
 	#Read file into python and format into list
 	output_lines = open(file,'r').read().splitlines()
 
+	# Check for normal termination
+	normal_term = False
+	for line in reversed(output_lines[-20:]):
+		if "Normal termination of Gaussian" in line:
+			normal_term = True
+			break
+	if not normal_term:
+		raise ValueError("Error: Gaussian calculation in " + file + " did not terminate normally. Please fix the calculation before running StrainViz.")
+
 	#Initialize needed variables
 	read_line = False
 	force_data = [[]]
