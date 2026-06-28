@@ -10,7 +10,7 @@ def map_forces(geometry, force_output):
 
 	bond_atoms = []
 	for line in bond_forces:
-		bond_atoms.append(bond_forces[1])
+		bond_atoms.append(line[1])
 	
 	#Use the base geometry and unoptimized dummy geometry to create a key
 	key = create_key(load_geometry(geometry), load_geometry(geometry[:-4] + "/" + os.path.splitext(force_output)[0] + ".xyz"), bond_atoms)
@@ -51,6 +51,15 @@ when calling this function. Returns lists of bond, angle, and dihedral forces.
 def force_parse(file):
 	#Read file into python and format into list
 	output_lines = open(file,'r').read().splitlines()
+
+	# Check for normal termination
+	normal_term = False
+	for line in reversed(output_lines[-20:]):
+		if "Normal termination of Gaussian" in line:
+			normal_term = True
+			break
+	if not normal_term:
+		raise ValueError("Error: Gaussian calculation in " + file + " did not terminate normally. Please fix the calculation before running StrainViz.")
 
 	#Initialize needed variables
 	read_line = False
